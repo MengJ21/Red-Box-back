@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meng.mapper.SysUserMapper">
+    <select id="findAll" resultType="com.meng.entity.SysUser">
+        select * from sys_user
+    </select>
+<!--    用户信息结果-->
+    <resultMap id="mainMap" type="com.meng.entity.SysUser">
+        <id column="id" property="id"/>
+        <result column="user_name" property="userName"/>
+        <result column="password" property="password"/>
+        <result column="sex" property="sex"/>
+        <result column="avatar" property="avatar"/>
+        <result column="address" property="address"/>
+        <result column="open_id" property="openId"/>
+        <result column="status" property="status"/>
+        <result column="admin" property="admin"/>
+        <result column="phone_number" property="phoneNumber"/>
+        <collection property="roles" ofType="com.meng.entity.SysRole" select="findRoles" column="id">
+
+        </collection>
+    </resultMap>
+<!--    角色结果-->
+    <resultMap id="roleMap" type="com.meng.entity.SysRole">
+        <id column="id" property="id"/>
+        <result column="label" property="label"/>
+        <result column="code" property="code"/>
+        <collection property="menus"  ofType="com.meng.entity.SysMenu" select="findMenus" column="id"/>
+        <collection property="permissions"  ofType="com.meng.entity.SysPermission" select="findPermission" column="id"/>
+    </resultMap>
+<!--    菜单结果-->
+    <resultMap id="menuMap" type="com.meng.entity.SysMenu">
+        <id column="id" property="id"/>
+        <result column="path" property="path"/>
+        <result column="icon" property="icon"/>
+        <result column="title" property="title"/>
+        <result column="component" property="component"/>
+        <collection property="children" ofType="com.meng.entity.SysMenu" select="findChildrenMenu" column="id"/>
+    </resultMap>
+<!--    权限结果-->
+    <resultMap id="permissionMap" type="com.meng.entity.SysPermission">
+        <id column="id" property="id"/>
+        <result column="label" property="label"/>
+        <result column="code" property="code"/>
+    </resultMap>
+
+<!--    获取用户信息-->
+    <select id="findByUsername" parameterType="java.lang.String" resultType="com.meng.entity.SysUser">
+        select * from sys_user where username = #{username}
+    </select>
+<!--    根据用户id查询角色信息-->
+    <select id="findRoles" parameterType="int" resultMap="roleMap">
+        select * from sys_role where id in (select role_id from user_roles where user_id = #{id})
+    </select>
+<!--    根据用户id查询数据权限信息-->
+    <select id="findPermission" parameterType="int" resultMap="permissionMap">
+        select * from sys_permission where id in(select permission_id from roles_permissions where role_id = #{id})
+    </select>
+<!--    根据角色id查询菜单信息-->
+    <select id="findMenus" parameterType="int" resultMap="menuMap">
+        select * from sys_menu where id in (select menu_id from roles_menus where role_id = #{id}) and parent_id is null;
+    </select>
+<!--    获取子菜单信息-->
+    <select id="findChildrenMenu" parameterType="int" resultType="com.meng.entity.SysMenu">
+        select * from sys_menu where id = {id}
+    </select>
+</mapper>
+

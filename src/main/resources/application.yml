@@ -1,0 +1,44 @@
+server:
+  port: 8081
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  author: 孟举
+#配置项目名称
+  application:
+    name: redBox
+#配置mysql数据源
+  datasource:
+    username: root
+    password: yuxin229
+    url: jdbc:mysql://localhost:3306/1?useUnicode=true&characterEncoding=UTF-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+#配置mybatis
+mybatis:
+  #  mapper接口找的xml文件
+  mapper-locations: classpath:mapper/*.xml
+  #扫描的实体类
+  type-aliases-package: com.meng.entity
+  configuration:
+    #sql日志打印
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #开启驼峰命名
+    map-underscore-to-camel-case: true
+
+#jwt配置
+jwt:
+  # 请求头
+  tokenHeader: Authorization
+  # 签名加盐
+  secret: mengjuhencai123
+  #jwt过期时间
+  expiration: 1800
+  #token头部
+  tokenHead: 'Bearer'
+
+
+
+
+
+
